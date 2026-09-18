@@ -334,30 +334,30 @@ img {
 .payment-methods {
     padding: 6rem 0 4rem 0;
     background-color: var(--white);
-    overflow: hidden;
 }
 
 .payment-carousel {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
-    padding: 1rem 5%;
-    justify-content: center;
-    flex-wrap: wrap;
+    padding: 0;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 90%;
 }
 
 .payment-carousel img {
-    flex: 0 0 auto;
-    width: calc(25% - 1.5rem);
-    max-width: 280px;
+    width: 100%;
     height: auto;
-    border-radius: 20px;
+    display: block;
+    border-radius: 16px;
     transition: transform 0.4s ease, box-shadow 0.4s ease;
     box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
 .payment-carousel img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 30px rgba(229, 20, 53, 0.25);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(229, 20, 53, 0.25);
 }
 
 /* ==========================================================================
@@ -510,9 +510,9 @@ img {
     .footer-container { grid-template-columns: 1fr; }
     .footer-map { height: 300px; }
     
-    .payment-carousel img {
-        width: calc(50% - 1.5rem);
-        max-width: 300px;
+    .payment-carousel {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 600px;
     }
 }
 
@@ -538,20 +538,9 @@ img {
     .services-grid { grid-template-columns: 1fr; }
     
     .payment-carousel {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        justify-content: flex-start;
-        padding: 1rem 1rem 1rem 5%;
-    }
-    .payment-carousel::-webkit-scrollbar { display: none; }
-    .payment-carousel img {
-        width: 220px;
-        max-width: none;
-        scroll-snap-align: center;
-        flex-shrink: 0;
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 400px;
+        gap: 1rem;
     }
     
     .floating-wsp { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 28px; }
