@@ -52,6 +52,11 @@ a {
     transition: var(--transition);
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 .container {
     width: 90%;
     max-width: 1200px;
@@ -150,7 +155,7 @@ a {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    padding-top: 80px; /* Offset for navbar */
+    padding-top: 80px;
     background: radial-gradient(circle at 100% 0%, var(--secondary-light) 0%, transparent 60%);
     position: relative;
     overflow: hidden;
@@ -159,12 +164,12 @@ a {
 .hero-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    gap: 3rem;
     align-items: center;
 }
 
 .hero-content h1 {
-    font-size: 3.5rem;
+    font-size: clamp(2rem, 4vw, 3.5rem);
     margin-bottom: 1.5rem;
 }
 
@@ -183,8 +188,8 @@ a {
 }
 
 .abstract-shape {
-    width: 400px;
-    height: 400px;
+    width: min(400px, 80%);
+    aspect-ratio: 1;
     background: linear-gradient(135deg, var(--secondary), var(--primary));
     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
     animation: blob 8s ease-in-out infinite;
@@ -217,13 +222,15 @@ a {
 .steps-grid {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 0;
     margin-top: 3rem;
 }
 
 .step-card {
     text-align: center;
     flex: 1;
+    max-width: 300px;
     padding: 2rem;
     background: var(--bg-light);
     border-radius: 20px;
@@ -271,62 +278,8 @@ a {
 .step-arrow {
     font-size: 2rem;
     color: var(--secondary);
-    margin: 0 1rem;
-}
-
-/* ==========================================================================
-   Payment Methods Section
-   ========================================================================== */
-.payment-methods {
-    padding: 6rem 0 4rem 0;
-    background-color: var(--white);
-    overflow: hidden;
-}
-
-.payment-carousel {
-    display: flex;
-    gap: 2rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding: 1rem 5%;
-    scrollbar-width: none; /* Firefox */
-}
-
-.payment-carousel::-webkit-scrollbar {
-    display: none; /* Chrome, Safari */
-}
-
-.payment-carousel img {
-    flex: 0 0 auto;
-    width: 280px;
-    height: auto;
-    border-radius: 20px;
-    scroll-snap-align: center;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-.payment-carousel img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 30px rgba(229, 20, 53, 0.25);
-}
-
-@media (min-width: 1100px) {
-    /* On large screens, center all 4 images in a row */
-    .payment-carousel {
-        justify-content: center;
-        overflow-x: visible;
-    }
-    .payment-carousel img {
-        width: 260px;
-    }
-}
-
-@media (max-width: 768px) {
-    .payment-carousel img {
-        width: 240px;
-    }
+    margin: 0 1.5rem;
+    flex-shrink: 0;
 }
 
 /* ==========================================================================
@@ -376,6 +329,38 @@ a {
 }
 
 /* ==========================================================================
+   Payment Methods Section
+   ========================================================================== */
+.payment-methods {
+    padding: 6rem 0 4rem 0;
+    background-color: var(--white);
+    overflow: hidden;
+}
+
+.payment-carousel {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 5%;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.payment-carousel img {
+    flex: 0 0 auto;
+    width: calc(25% - 1.5rem);
+    max-width: 280px;
+    height: auto;
+    border-radius: 20px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.payment-carousel img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(229, 20, 53, 0.25);
+}
+
+/* ==========================================================================
    Footer Section
    ========================================================================== */
 .footer {
@@ -388,6 +373,7 @@ a {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
+    align-items: start;
     margin-bottom: 3rem;
 }
 
@@ -430,9 +416,18 @@ a {
     gap: 10px;
 }
 
+.contact-details a {
+    color: var(--white);
+}
+
+.contact-details a:hover {
+    color: var(--secondary);
+}
+
 .contact-details i {
     margin-top: 4px;
     color: var(--secondary);
+    flex-shrink: 0;
 }
 
 .ref {
@@ -447,6 +442,12 @@ a {
     overflow: hidden;
     height: 350px;
     box-shadow: var(--shadow-lg);
+}
+
+.footer-map iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 .footer-bottom {
@@ -499,29 +500,59 @@ a {
 }
 
 /* ==========================================================================
-   Responsive Styles
+   Responsive: Tablet (max-width: 992px)
    ========================================================================== */
 @media (max-width: 992px) {
-    .hero-content h1 { font-size: 2.8rem; }
-    .abstract-shape { width: 300px; height: 300px; }
+    .hero-container { gap: 2rem; }
+    .abstract-shape { width: min(300px, 70%); }
     .box-icon { font-size: 6rem; }
     .services-grid { grid-template-columns: repeat(2, 1fr); }
     .footer-container { grid-template-columns: 1fr; }
     .footer-map { height: 300px; }
+    
+    .payment-carousel img {
+        width: calc(50% - 1.5rem);
+        max-width: 300px;
+    }
 }
 
+/* ==========================================================================
+   Responsive: Mobile (max-width: 768px)
+   ========================================================================== */
 @media (max-width: 768px) {
-    .nav-links { display: none; } /* Hamburger menu ready for future */
+    .nav-links { display: none; }
     .hero-container { grid-template-columns: 1fr; text-align: center; }
-    .hero { padding-top: 120px; }
-    .hero-content h1 { font-size: 2.5rem; }
+    .hero { padding-top: 120px; min-height: auto; padding-bottom: 3rem; }
+    .hero-content h1 { font-size: 2.2rem; }
     .hero-actions { justify-content: center; display: flex; }
+    .hero-image { margin-top: 2rem; }
+    .abstract-shape { width: 250px; }
+    .box-icon { font-size: 5rem; }
     
-    .steps-grid { flex-direction: column; gap: 2rem; }
+    .section-title { font-size: 2rem; }
+    
+    .steps-grid { flex-direction: column; gap: 1.5rem; }
     .step-arrow { transform: rotate(90deg); margin: 0; }
-    .step-card { width: 100%; }
+    .step-card { width: 100%; max-width: 100%; }
     
     .services-grid { grid-template-columns: 1fr; }
+    
+    .payment-carousel {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        justify-content: flex-start;
+        padding: 1rem 1rem 1rem 5%;
+    }
+    .payment-carousel::-webkit-scrollbar { display: none; }
+    .payment-carousel img {
+        width: 220px;
+        max-width: none;
+        scroll-snap-align: center;
+        flex-shrink: 0;
+    }
     
     .floating-wsp { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 28px; }
 }
