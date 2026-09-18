@@ -55,42 +55,58 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalImages = images.length;
         let currentIndex = 0;
         let autoSlideTimer = null;
+        let dotsContainer = null;
 
         function isMobile() {
             return window.innerWidth <= 768;
         }
 
-        function slideTo(index) {
-            const offset = index * -100;
-            images.forEach(img => {
-                img.style.transform = 'translateX(' + offset + '%)';
+        // Create dot indicators
+        function createDots() {
+            if (dotsContainer) dotsContainer.remove();
+            if (!isMobile()) return;
+
+            dotsContainer = document.createElement('div');
+            dotsContainer.className = 'carousel-dots';
+            for (let i = 0; i < totalImages; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => {
+                    currentIndex = i;
+                    scrollToIndex(i);
+                    resetAutoSlide();
+                });
+                dotsContainer.appendChild(dot);
+            }
+            carousel.parentNode.insertBefore(dotsContainer, carousel.nextSibling);
+        }
+
+        function updateDots() {
+            if (!dotsContainer) return;
+            const dots = dotsContainer.querySelectorAll('.dot');
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentIndex);
             });
         }
 
-        function resetSlider() {
-            images.forEach(img => {
-                img.style.transform = '';
-            });
-            currentIndex = 0;
+        function scrollToIndex(index) {
+            const scrollAmount = carousel.offsetWidth * index;
+            carousel.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+            updateDots();
         }
 
         function nextSlide() {
             if (!isMobile()) {
                 stopAutoSlide();
-                resetSlider();
                 return;
             }
             currentIndex = (currentIndex + 1) % totalImages;
-            slideTo(currentIndex);
+            scrollToIndex(currentIndex);
         }
 
         function startAutoSlide() {
             stopAutoSlide();
-            if (!isMobile()) {
-                resetSlider();
-                return;
-            }
-            slideTo(currentIndex);
+            if (!isMobile()) return;
             autoSlideTimer = setInterval(nextSlide, 3000);
         }
 
@@ -101,16 +117,47 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Start on load
+        function resetAutoSlide() {
+            stopAutoSlide();
+            startAutoSlide();
+        }
+
+        // Sync dots when user swipes manually
+        let scrollTimeout;
+        carousel.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const newIndex = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+                if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalImages) {
+                    currentIndex = newIndex;
+                    updateDots();
+                }
+            }, 100);
+        });
+
+        // Pause auto-slide on touch, resume on release
+        carousel.addEventListener('touchstart', stopAutoSlide, { passive: true });
+        carousel.addEventListener('touchend', () => {
+            setTimeout(startAutoSlide, 2000);
+        }, { passive: true });
+
+        // Initialize
+        createDots();
         startAutoSlide();
 
-        // Restart on resize (with debounce)
+        // Handle resize
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 currentIndex = 0;
-                startAutoSlide();
+                createDots();
+                if (isMobile()) {
+                    carousel.scrollTo({ left: 0, behavior: 'auto' });
+                    startAutoSlide();
+                } else {
+                    stopAutoSlide();
+                }
             }, 250);
         });
     }

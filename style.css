@@ -539,24 +539,54 @@ img {
     
     .payment-carousel {
         display: flex;
-        overflow: hidden;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
         gap: 0;
-        max-width: 320px;
+        max-width: 350px;
         margin: 0 auto;
-        width: 85%;
+        width: 90%;
         position: relative;
+        border-radius: 16px;
+    }
+    .payment-carousel::-webkit-scrollbar {
+        display: none;
     }
     .payment-carousel img {
         min-width: 100%;
         width: 100%;
         flex-shrink: 0;
+        scroll-snap-align: start;
         border-radius: 16px;
         box-shadow: none;
-        transition: transform 0.6s ease;
+        transition: opacity 0.4s ease;
     }
     .payment-carousel img:hover {
         transform: none;
         box-shadow: none;
+    }
+
+    /* Carousel dot indicators */
+    .carousel-dots {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 1.5rem;
+    }
+    .carousel-dots .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--secondary-light);
+        border: 2px solid var(--secondary);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .carousel-dots .dot.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        transform: scale(1.3);
     }
     
     .floating-wsp { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 28px; }
