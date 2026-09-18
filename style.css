@@ -284,10 +284,12 @@ a {
 
 .payment-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
     margin-top: 3rem;
-    align-items: center;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .payment-card {
@@ -316,12 +318,8 @@ a {
     transform: scale(1.05);
 }
 
-@media (max-width: 992px) {
-    .payment-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 576px) {
-    .payment-grid { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+    .payment-grid { grid-template-columns: 1fr; max-width: 400px; }
 }
 
 /* ==========================================================================
