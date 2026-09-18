@@ -176,6 +176,145 @@
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
-    <script src="script.js?v=3"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Fade-in Scroll Animations
+        var fadeElements = document.querySelectorAll('.fade-in');
+        function checkVisibility() {
+            var triggerBottom = window.innerHeight / 5 * 4;
+            fadeElements.forEach(function(element) {
+                if (element.getBoundingClientRect().top < triggerBottom) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+        window.addEventListener('scroll', checkVisibility);
+        checkVisibility();
+
+        // 2. Navbar Scroll Effect
+        var navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+                navbar.style.padding = '0.5rem 0';
+            } else {
+                navbar.style.boxShadow = '0 4px 6px rgba(0,0,0,0.05)';
+                navbar.style.padding = '1rem 0';
+            }
+        });
+
+        // 3. Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                var targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                var targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // 4. Auto-slide Payment Carousel on small screens
+        var carousel = document.querySelector('.payment-carousel');
+        if (carousel) {
+            var imgs = carousel.querySelectorAll('img');
+            var total = imgs.length;
+            var current = 0;
+            var timer = null;
+            var dots = null;
+
+            function mobile() { return window.innerWidth <= 768; }
+
+            function makeDots() {
+                if (dots) dots.remove();
+                dots = null;
+                if (!mobile()) return;
+                dots = document.createElement('div');
+                dots.className = 'carousel-dots';
+                for (var i = 0; i < total; i++) {
+                    var d = document.createElement('span');
+                    d.className = i === 0 ? 'dot active' : 'dot';
+                    d.setAttribute('data-i', i);
+                    d.addEventListener('click', function() {
+                        current = parseInt(this.getAttribute('data-i'));
+                        goTo(current);
+                        stop(); start();
+                    });
+                    dots.appendChild(d);
+                }
+                carousel.parentNode.insertBefore(dots, carousel.nextSibling);
+            }
+
+            function setDots() {
+                if (!dots) return;
+                var all = dots.querySelectorAll('.dot');
+                for (var i = 0; i < all.length; i++) {
+                    if (i === current) { all[i].classList.add('active'); }
+                    else { all[i].classList.remove('active'); }
+                }
+            }
+
+            function goTo(idx) {
+                carousel.scrollTo({ left: carousel.offsetWidth * idx, behavior: 'smooth' });
+                setDots();
+            }
+
+            function next() {
+                if (!mobile()) { stop(); return; }
+                current = (current + 1) % total;
+                goTo(current);
+            }
+
+            function start() {
+                stop();
+                if (!mobile()) return;
+                timer = setInterval(next, 3000);
+            }
+
+            function stop() {
+                if (timer) { clearInterval(timer); timer = null; }
+            }
+
+            // Sync dots on manual swipe
+            var st;
+            carousel.addEventListener('scroll', function() {
+                clearTimeout(st);
+                st = setTimeout(function() {
+                    var ni = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+                    if (ni !== current && ni >= 0 && ni < total) {
+                        current = ni;
+                        setDots();
+                    }
+                }, 100);
+            });
+
+            // Pause on touch
+            carousel.addEventListener('touchstart', function() { stop(); }, { passive: true });
+            carousel.addEventListener('touchend', function() {
+                setTimeout(function() { start(); }, 2000);
+            }, { passive: true });
+
+            // Init
+            makeDots();
+            start();
+
+            // Resize
+            var rt;
+            window.addEventListener('resize', function() {
+                clearTimeout(rt);
+                rt = setTimeout(function() {
+                    current = 0;
+                    makeDots();
+                    if (mobile()) {
+                        carousel.scrollTo({ left: 0, behavior: 'auto' });
+                        start();
+                    } else { stop(); }
+                }, 250);
+            });
+        }
+    });
+    </script>
 </body>
 </html>
