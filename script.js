@@ -47,4 +47,47 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 4. Auto-slide Payment Carousel on small screens
+    const carousel = document.querySelector('.payment-carousel');
+    if (carousel) {
+        const images = carousel.querySelectorAll('img');
+        let currentIndex = 0;
+        let autoSlideInterval = null;
+
+        function slideTo(index) {
+            images.forEach(img => {
+                img.style.transform = `translateX(-${index * 100}%)`;
+            });
+        }
+
+        function startAutoSlide() {
+            // Only auto-slide on screens <= 768px
+            if (window.innerWidth > 768) {
+                // Reset position on desktop
+                images.forEach(img => { img.style.transform = ''; });
+                return;
+            }
+
+            if (autoSlideInterval) clearInterval(autoSlideInterval);
+            
+            autoSlideInterval = setInterval(() => {
+                if (window.innerWidth > 768) {
+                    clearInterval(autoSlideInterval);
+                    images.forEach(img => { img.style.transform = ''; });
+                    return;
+                }
+                currentIndex = (currentIndex + 1) % images.length;
+                slideTo(currentIndex);
+            }, 3000);
+        }
+
+        // Initialize and handle resize
+        startAutoSlide();
+        window.addEventListener('resize', () => {
+            currentIndex = 0;
+            slideTo(0);
+            startAutoSlide();
+        });
+    }
 });

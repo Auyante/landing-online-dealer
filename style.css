@@ -538,9 +538,19 @@ img {
     .services-grid { grid-template-columns: 1fr; }
     
     .payment-carousel {
-        grid-template-columns: repeat(2, 1fr);
-        max-width: 400px;
+        display: flex;
+        overflow: hidden;
         gap: 1rem;
+        max-width: 320px;
+        margin: 0 auto;
+        width: 85%;
+        position: relative;
+    }
+    .payment-carousel img {
+        min-width: 100%;
+        flex-shrink: 0;
+        border-radius: 16px;
+        transition: transform 0.6s ease;
     }
     
     .floating-wsp { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 28px; }
