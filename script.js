@@ -51,43 +51,67 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Auto-slide Payment Carousel on small screens
     const carousel = document.querySelector('.payment-carousel');
     if (carousel) {
-        const images = carousel.querySelectorAll('img');
+        const images = Array.from(carousel.querySelectorAll('img'));
+        const totalImages = images.length;
         let currentIndex = 0;
-        let autoSlideInterval = null;
+        let autoSlideTimer = null;
+
+        function isMobile() {
+            return window.innerWidth <= 768;
+        }
 
         function slideTo(index) {
+            const offset = index * -100;
             images.forEach(img => {
-                img.style.transform = `translateX(-${index * 100}%)`;
+                img.style.transform = 'translateX(' + offset + '%)';
             });
         }
 
-        function startAutoSlide() {
-            // Only auto-slide on screens <= 768px
-            if (window.innerWidth > 768) {
-                // Reset position on desktop
-                images.forEach(img => { img.style.transform = ''; });
-                return;
-            }
-
-            if (autoSlideInterval) clearInterval(autoSlideInterval);
-            
-            autoSlideInterval = setInterval(() => {
-                if (window.innerWidth > 768) {
-                    clearInterval(autoSlideInterval);
-                    images.forEach(img => { img.style.transform = ''; });
-                    return;
-                }
-                currentIndex = (currentIndex + 1) % images.length;
-                slideTo(currentIndex);
-            }, 3000);
+        function resetSlider() {
+            images.forEach(img => {
+                img.style.transform = '';
+            });
+            currentIndex = 0;
         }
 
-        // Initialize and handle resize
+        function nextSlide() {
+            if (!isMobile()) {
+                stopAutoSlide();
+                resetSlider();
+                return;
+            }
+            currentIndex = (currentIndex + 1) % totalImages;
+            slideTo(currentIndex);
+        }
+
+        function startAutoSlide() {
+            stopAutoSlide();
+            if (!isMobile()) {
+                resetSlider();
+                return;
+            }
+            slideTo(currentIndex);
+            autoSlideTimer = setInterval(nextSlide, 3000);
+        }
+
+        function stopAutoSlide() {
+            if (autoSlideTimer) {
+                clearInterval(autoSlideTimer);
+                autoSlideTimer = null;
+            }
+        }
+
+        // Start on load
         startAutoSlide();
+
+        // Restart on resize (with debounce)
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            currentIndex = 0;
-            slideTo(0);
-            startAutoSlide();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                currentIndex = 0;
+                startAutoSlide();
+            }, 250);
         });
     }
 });
